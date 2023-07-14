@@ -2,10 +2,10 @@
 
 # Table of Contents
 
-** [Aim](#aim) 
+* [Aim](#aim) 
 ** [Overview](#overview) 
-** [Terminology](#terminology) 
-** [Type Definitions](#type-definitions) 
+* [Terminology](#terminology) 
+* [Type Definitions](#type-definitions) 
 ** [TLV Based Messages](#tlv-based-messages) 
 ** [Taproot Channel Announcement Proof and Verification](#taproot-channel-announcement-proof-and-verification)
 ** [Block-height fields](#block-height-fields)
@@ -27,9 +27,23 @@
 
 ## Aim
 
+This document aims to update the gossip protocol defined in [BOLT 7][bolt-7] to
+allow for advertisement and verification of taproot channels. An entirely new
+set of gossip messages are defined that use [BIP-340][bip-340] signatures and
+that use a mostly TLV based structure.
+
 ## Overview
 
 ## Terminology
+
+- Collectively, the set of new gossip messages will be referred to as
+  "Taproot gossip".
+- `node_1` and `node_2` refer to the two parties involved in opening a channel.
+- `node_ID_1` and `node_ID_2` respectively refer to the public keys that
+  `node_1` and `node_2` use to identify their nodes in the network.
+- `bitcoin_key_1` and `bitcoin_key_2` respectively refer to the public keys
+  that `node_1` and `node_2` will use for the specific channel being opened.
+  The funding transaction's output will be derived from these two keys.
 
 ## Type Definitions
 
@@ -37,6 +51,12 @@
   [BIP-340][bip-340].
 * `boolean_tlv`: a zero length TLV record. If the TLV is present then `true` is 
    implied, otherwise `false` is implied.
+* `partial_signature`: a 32-byte partial MuSig2 signature as defined
+  in [BIP 327][bip-327].
+* `public_nonce`: a 66-byte public nonce as defined in [BIP 327][bip-327].
+* `utf8`: a byte as part of a UTF-8 string. A writer MUST ensure an array of
+  these is a valid UTF-8 string, a reader MAY reject any messages containing an
+  array of these which is not a valid UTF-8 string.
 
 ## TLV Definitions
 
@@ -704,6 +724,7 @@ ideas mentioned in the following references:
 
 [bolt-9-features]: ./09-features.md#bolt-9-assigned-feature-flags
 [bip-340]: https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki
+[bip-327]: https://github.com/bitcoin/bips/blob/master/bip-0327.mediawiki
 [ml-rusty-2019-gossip-v2]: https://lists.linuxfoundation.org/pipermail/lightning-dev/2019-July/002065.html
 [ml-roasbeef-2022-tr-chan-announcement]: https://lists.linuxfoundation.org/pipermail/lightning-dev/2022-March/003526.html
 [prop224]: https://gitweb.torproject.org/torspec.git/tree/proposals/224-rend-spec-ng.txt
