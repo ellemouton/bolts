@@ -27,7 +27,7 @@
 This document aims to update the gossip protocol defined in [BOLT 7][bolt-7] to
 allow for advertisement and verification of taproot channels. An entirely new
 set of gossip messages are defined that use [BIP-340][bip-340] signatures and
-that use a purely TLV based schema.
+that use a mostly TLV based structure. 
 
 ## Overview
 
@@ -78,14 +78,15 @@ The following convenient types are defined:
 
 ## TLV Based Messages
 
-The initial set of Lightning Network messages consisted of fields that had to 
-be present. Later on, TLV encoding was introduced which provided a backward 
-compatible way to extend messages. To ensure that the new messages defined in 
-this document remain as future-proof as possible, the messages will be pure TLV
-streams. By making all fields in the messages TLV records, fields that we
-consider mandatory today can easily be dropped in future (when coupled with a 
-new feature bit) without needing to completely redefine the gossip message in 
-order to make the field optional.
+The initial set of Lightning Network messages consisted of a flat set of 
+serialised fields that were mandatory. Later on, TLV encoding was introduced 
+which provided a backward compatible way to extend messages. To ensure that the 
+new messages defined in this document remain as future-proof as possible, the 
+messages will mostly be pure TLV streams with a fixed 64-byte signature over the
+tlv stream appended at the front of the message. By making all fields in the 
+messages TLV records, fields that we consider mandatory today can easily be 
+dropped in future (when coupled with a new feature bit) without needing to 
+completely redefine the gossip message in order to make the field optional.
 
 ## Taproot Channel Proof and Verification
 
@@ -157,9 +158,9 @@ block. To allow for bursts, nodes are encouraged not to use the latest block
 height for their latest announcements/updates but rather to backdate and use
 older block heights that they have not used in an announcement/update. There of
 course needs to be a limit on the start block height that the node can use:
-for `channel_update_2` messages, the first timestamp must be the block height in
-which the channel funding transaction was mined and all updates after the
-initial one must have increasing timestamps. Nodes are then responsible for
+for `channel_update_2` messages, the first `blockheight` must be the block 
+height in which the channel funding transaction was mined and all updates after 
+the initial one must have increasing timestamps. Nodes are then responsible for
 building up their own timestamp buffer: if they want to be able to send
 multiple `channel_update_2` messages per block, then they will need to ensure 
 that there are blocks during which they do not broadcast any updates. This 
@@ -168,7 +169,7 @@ provides an incentive for nodes not to spam the network with too many updates.
 To also prevent nodes from building up too large of a burst-buffer with which 
 they can spam the network and to give a limit to how low the block height on a 
 `node_announcement_2` can be: nodes should not be allowed to use a block height
-smaller 2016 (~ one week worth of blocks) below the current block height.
+smaller 2016 (~ two weeks worth of blocks) below the current block height.
 
 ### Simplifies Channel Announcement Queries
 
