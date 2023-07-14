@@ -2,6 +2,29 @@
 
 # Table of Contents
 
+** [Aim](#aim) 
+** [Overview](#overview) 
+** [Terminology](#terminology) 
+** [Type Definitions](#type-definitions) 
+** [TLV Based Messages](#tlv-based-messages) 
+** [Taproot Channel Announcement Proof and Verification](#taproot-channel-announcement-proof-and-verification)
+** [Block-height fields](#block-height-fields)
+** [Bootstrapping Taproot Gossip](#bootstrapping-taproot-gossip)
+** [Specification](#specification)
+*    * [Feature Bits](#feature-bit)
+*    * [Feature Bit Contexts](#feature-bit-contexts)
+*    * [`open_channel` Extra Requirements](#openchannel-extra-requirements)
+*    * [`channel_ready` Extensions](#channelready-extensions)
+*    * [The `announcement_signatures_2` message](#the-announcementsignatures2-message)
+*    * [The `channel_announcement_2` message](#the-channelannouncement2-message)
+*    * [The `node_announcement_2` message](#the-nodeannouncement2-message)
+*    * [The `channel_update_2` message](#the-channelupdate2-message)
+** [Appendix A: Algorithms](#appendix-a-algorithms)
+*    * [Partial Signature Calculation](#partial-signature-calculation)
+*    * [Partial Signature Verification](#partial-signature-verification)
+** [Appendix B: Test Vectors](#appendix-b-test-vectors)
+** [Acknowledgements](#acknowledgements)
+
 ## Aim
 
 ## Overview
@@ -14,6 +37,8 @@
   [BIP-340][bip-340].
 * `boolean_tlv`: a zero length TLV record. If the TLV is present then `true` is 
    implied, otherwise `false` is implied.
+
+## TLV Definitions
 
 ## Taproot Channel Announcement Proof and Verification
 
