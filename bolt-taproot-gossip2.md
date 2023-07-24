@@ -7,7 +7,8 @@
 * [Terminology](#terminology) 
 * [Type Definitions](#type-definitions) 
 ** [TLV Based Messages](#tlv-based-messages) 
-** [Taproot Channel Announcement Proof and Verification](#taproot-channel-announcement-proof-and-verification)
+* [Taproot Channel Announcement Proof and Verification](#taproot-channel-announcement-proof-and-verification)
+* [Future iteration of Taproot gossip: UTXO leveraging](#future-iteration-of-taproot-gossip-utxo-leveraging)
 ** [Block-height fields](#block-height-fields)
 ** [Bootstrapping Taproot Gossip](#bootstrapping-taproot-gossip)
 ** [Specification](#specification)
@@ -34,6 +35,36 @@ that use a mostly TLV based structure.
 
 ## Overview
 
+TODO(convert to paragraph):
+
+- legacy gossip included proof of entire underlying P2SH script so that it could 
+  be shown that the bitcoin keys and node keys commit to each other. This is 
+  updated now with taproot channels so that only proof of ownership is required
+  and the underlying script no longer needs to be provided. The channel peers 
+  instead need only provide a partial signature for the resulting output key. 
+- 
+
+The initial version of the Lightning Network gossip protocol as defined in
+[BOLT 7][bolt-7] was designed around P2WSH funding transactions. For these
+channels, the `channel_announcement` message is used to advertise the channel to
+the rest of the network. Nodes in the network use the content of this message to
+prove that the channel is sufficiently bound to the Lightning Network context
+by being provided enough information to prove that the script is a 2-of-2
+multi-sig and that it is owned by the nodes advertising the channel. This
+ownership proof is done by including signatures in the `channel_announcement`
+from both the node ID keys along with the bitcoin keys used in the P2WSH script.
+This proof and verification protocol is, however, not compatible with SegWit V1
+(P2TR) outputs and so cannot be used to advertise the channels defined in the
+[Simple Taproot Channel][simple-taproot-chans] proposal. This document thus aims
+to define an updated gossip protocol that will allow nodes to both advertise and
+verify taproot channels. This part of the update affects the
+`announcement_signatures` and `channel_announcement` messages.
+
+The opportunity is also taken to rework the `node_announcement` and
+`channel_update` messages to take advantage of [BIP-340][bip-340] signatures and
+TLV fields. Timestamp fields are also updated to be block heights instead of
+Unix timestamps.
+
 ## Terminology
 
 - Collectively, the set of new gossip messages will be referred to as
@@ -57,6 +88,8 @@ that use a mostly TLV based structure.
 * `utf8`: a byte as part of a UTF-8 string. A writer MUST ensure an array of
   these is a valid UTF-8 string, a reader MAY reject any messages containing an
   array of these which is not a valid UTF-8 string.
+
+## TLV Based Messages
 
 ## TLV Definitions
 
